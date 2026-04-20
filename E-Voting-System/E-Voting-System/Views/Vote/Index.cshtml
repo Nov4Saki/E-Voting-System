@@ -1,0 +1,159 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Vote";
+}
+
+<!-- ─── VS DIVIDER ─── -->
+<div class="vs-badge">VS</div>
+
+<!-- ─── CANDIDATES ─── -->
+<div class="candidates-row">
+
+    <!-- ══ CANDIDATE A ══ -->
+    <div class="candidate-col" id="sectionA">
+        <div class="voted-overlay" id="overlayA" style="display: @(Model == 1 ? "flex" : "none")">
+            <div class="voted-badge-big"><i class="bi bi-check2-circle"></i> Vote Submitted</div>
+        </div>
+        <div class="candidate-card animate-up">
+
+            <!-- Avatar -->
+            <div class="candidate-img-wrap mx-auto mb-4">
+                <div class="candidate-img-placeholder">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <h2 class="candidate-name">Alexandra Mercer</h2>
+            <p class="candidate-title">Progressive Alliance · Candidate A</p>
+
+            <!-- Promises -->
+            <ul class="candidate-promises">
+                <li>Expand renewable energy infrastructure by 40% by 2030</li>
+                <li>Universal healthcare access for all citizens</li>
+                <li>Increase minimum wage to $22/hour over 3 years</li>
+                <li>Free public university education for qualified students</li>
+                <li>Digital privacy bill to protect citizens online</li>
+            </ul>
+
+            <!-- Vote count display (simulated) -->
+            <div class="vote-count mb-3">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span id="countA">@ViewBag.CountA</span> votes cast
+            </div>
+
+            <!-- Vote Button -->
+            <button class="btn-fintech" onclick="openVoteModal('Alexandra Mercer', 'Vote1')" @(Model != 0 ? "disabled" : "") style="@(Model != 0 ? "opacity:0.5; cursor:not-allowed;" : "")">
+                <i class="bi bi-check2-square me-2"></i>Vote for Alexandra
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- ══ CANDIDATE B ══ -->
+    <div class="candidate-col" id="sectionB">
+        <div class="voted-overlay" id="overlayB" style="display: @(Model == 2 ? "flex" : "none")">
+            <div class="voted-badge-big"><i class="bi bi-check2-circle"></i> Vote Submitted</div>
+        </div>
+        <div class="candidate-card animate-up-delay">
+
+            <!-- Avatar -->
+            <div class="candidate-img-wrap mx-auto mb-4">
+                <div class="candidate-img-placeholder">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <h2 class="candidate-name">Daniel Hartwell</h2>
+            <p class="candidate-title">National Reform Party · Candidate B</p>
+
+            <!-- Promises -->
+            <ul class="candidate-promises">
+                <li>Cut corporate tax by 15% to attract foreign investment</li>
+                <li>Strengthen border security and immigration reform</li>
+                <li>Invest $200B in national infrastructure over 5 years</li>
+                <li>Deregulate small businesses to stimulate the economy</li>
+                <li>Mandatory military service for ages 18–20</li>
+            </ul>
+
+            <!-- Vote count display (simulated) -->
+            <div class="vote-count mb-3">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span id="countB">@ViewBag.CountB</span> votes cast
+            </div>
+
+            <!-- Vote Button -->
+            <button class="btn-fintech" onclick="openVoteModal('Daniel Hartwell', 'Vote2')" @(Model != 0 ? "disabled" : "") style="@(Model != 0  ? "opacity:0.5; cursor:not-allowed;" : "")">
+                <i class="bi bi-check2-square me-2"></i>Vote for Daniel
+            </button>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ─── CONFIRMATION MODAL ─── -->
+<div class="modal fade" id="voteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center px-4 pb-2">
+                <div class="modal-icon warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <h5 class="modal-title mb-2">Confirm Your Vote</h5>
+                <p class="mb-0" id="voteConfirmText" style="font-size:0.87rem; color:var(--text-secondary); line-height:1.6;"></p>
+                <p class="mt-2" style="font-size:0.75rem; color:var(--text-muted);">
+                    <i class="bi bi-info-circle me-1"></i>This action is final and cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center gap-3 pb-4">
+                <button type="button" class="btn-outline-fintech" data-bs-dismiss="modal">
+                    <i class="bi bi-x me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn-fintech" style="width:auto; padding:0.65rem 2rem;" id="confirmVoteBtn">
+                    <i class="bi bi-check2 me-1"></i>Confirm Vote
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── SUCCESS MODAL ─── -->
+<div class="modal fade" id="voteSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center px-4 pb-2">
+                <div class="modal-icon success">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <h5 class="modal-title mb-2" style="color: var(--success);">Vote Submitted!</h5>
+                <p class="mb-1" style="font-size:0.87rem; color:var(--text-secondary); line-height:1.6;">
+                    Your vote has been submitted successfully.
+                </p>
+                <p style="font-size:0.78rem; color:var(--text-muted);">
+                    Reference ID: <span id="voteRefId" style="font-family:'JetBrains Mono',monospace; color:var(--gold);"></span>
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn-fintech" style="width:auto; padding:0.65rem 2.5rem;"
+                        data-bs-dismiss="modal">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/VoteSignalR.js" asp-append-version="true"></script>
+}

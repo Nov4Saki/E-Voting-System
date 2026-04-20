@@ -1,8 +1,114 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Register";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- ─── REGISTRATION ─── -->
+<div class="register-wrap">
+    <div class="register-card animate-up">
+
+        <div class="fintech-card">
+
+            <!-- Card Header -->
+            <div class="card-header-custom">
+                <div class="badge-secure">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    256-bit Encrypted · Verified
+                </div>
+                <h1 class="page-title">Voter <span>Registration</span></h1>
+                <p class="page-subtitle">
+                    Upload your National ID and a live selfie to verify your identity and access the secure voting platform.
+                </p>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body-custom">
+
+                <form method="post" asp-controller="Home" asp-action="Login" id="registrationForm" enctype="multipart/form-data" novalidate>
+                    @Html.AntiForgeryToken()
+                    <!-- Step 1: National ID -->
+                    <div class="mb-4 animate-up-delay">
+                        <label class="form-label-custom">
+                            <i class="bi bi-camera-fill"></i>
+                            <span class="step-badge">01</span>
+                            National ID Document
+                        </label>
+                        <div class="upload-zone" id="idZone">
+                            <input asp-for="IdImage" type="file" id="idUpload" accept="image/*" />
+                            <div class="upload-icon">
+                                <i class="bi bi-camera-fill"></i>
+                            </div>
+                            <strong>Drop your ID here</strong>
+                            <p>PNG, JPG or WEBP · Max 10MB</p>
+                            <span asp-validation-for="IdImage" class="text-danger"></span>
+                            <img id="idPreview" class="img-preview" alt="ID Preview" />
+                        </div>
+                    </div>
+
+                    <div class="divider-line"></div>
+
+                    <!-- Step 2: Selfie -->
+                    <div class="mb-4 animate-up-delay2">
+                        <label class="form-label-custom">
+                            <i class="bi bi-person-bounding-box"></i>
+                            <span class="step-badge">02</span>
+                            Selfie Holding Your ID
+                        </label>
+                        <div class="upload-zone" id="selfieZone">
+                            <input asp-for="SelfieImage" type="file" id="selfieUpload" accept="image/*" />
+                            <div class="upload-icon">
+                                <i class="bi bi-person-bounding-box"></i>
+                            </div>
+                            <strong>Take or upload your selfie</strong>
+                            <p>Hold your ID clearly visible · Good lighting</p>
+                            <span asp-validation-for="SelfieImage" class="text-danger"></span>
+                            <img id="selfiePreview" class="img-preview" alt="Selfie Preview" />
+                        </div>
+                    </div>
+
+                    <!-- Terms note -->
+                    <p style="font-size:0.72rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height:1.6;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        By registering, you confirm the documents are authentic and agree to the secure use of your biometric data for election purposes only.
+                    </p>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn-fintech" id="registerBtn">
+                        <i class="bi bi-send-check me-2"></i>Register &amp; Verify Identity
+                    </button>
+
+                </form>
+
+            </div><!-- /card-body -->
+        </div><!-- /fintech-card -->
+        <!-- Footer note -->
+        <p class="text-center mt-3" style="font-size:0.72rem; color: var(--text-muted);">
+            Already registered? <a href="@Url.Action("Index", "Vote")" style="color: var(--gold); text-decoration:none;">Proceed to vote →</a>
+        </p>
+
+    </div><!-- /register-card -->
+</div>
+
+<!-- ─── ERROR MODAL ─── -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center px-4 pb-2">
+                <div class="modal-icon danger" id="modalIcon">
+                    <i class="bi bi-x-circle-fill"></i>
+                </div>
+                <h5 class="modal-title mb-2" id="errorModalTitle">Registration Failed</h5>
+                <p class="mb-0" id="errorModalMsg" style="font-size:0.87rem; color: var(--text-secondary); line-height:1.6;"></p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn-fintech" style="width:auto; padding: 0.65rem 2.5rem;"
+                        data-bs-dismiss="modal">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

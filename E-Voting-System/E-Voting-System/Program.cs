@@ -1,3 +1,5 @@
+using E_Voting_System.Hubs;
+
 namespace E_Voting_System
 {
     public class Program
@@ -8,6 +10,8 @@ namespace E_Voting_System
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -29,6 +33,8 @@ namespace E_Voting_System
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapHub<VotingHub>("/hubs/vote");
 
             app.Run();
         }
