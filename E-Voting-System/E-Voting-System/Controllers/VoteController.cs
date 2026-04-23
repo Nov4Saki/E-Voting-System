@@ -1,49 +1,111 @@
-﻿using E_Voting_System.Hubs;
+﻿using E_Voting_System.Entities;
+using E_Voting_System.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace E_Voting_System.Controllers
 {
     public class VoteController : Controller
     {
         private readonly IHubContext<VotingHub> _votingHub;
-        public VoteController(IHubContext<VotingHub> votingHub)
+        private readonly AppDbContext _context;
+        public VoteController(IHubContext<VotingHub> votingHub, AppDbContext context)
         {
             _votingHub = votingHub;
+            _context = context;
         }
 
 
-        public IActionResult Index()
+        public  async Task<IActionResult> Index()
         {
-            int Voted = 1; // Return from database if the user have been voted or not
-                           // 0 means didn't vote
-                           // 1 voted for option A
-                           // 2 voted for option B
+            if (Request.Cookies["UserId"] == null)
+                return RedirectToAction("Index", "Home");
 
-            int countA = 300; // From database count of votes for option A from user table
-            int countB = 300; // From database count of votes for option A from user table
+
+            int voted = 0;
+            
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == Request.Cookies["UserId"]);
+
+            if (user == null)
+                return NotFound();
+
+            voted = user.Vote;
+                
+
+            int countA = await _context.Users.CountAsync(u=>u.Vote == 1); 
+            int countB = await _context.Users.CountAsync(u => u.Vote == 2);  
 
             ViewBag.CountA = countA;
             ViewBag.CountB = countB;
+            
+            return View(voted);
 
-            return View(Voted);
         }
 
-        public IActionResult Vote1()
+        public async Task<IActionResult> Vote1()
         {
-            // Ensuring that the user has not already voted.
-            // Update the vote in user table database.
+            if (Request.Cookies["UserId"] == null)
+                return RedirectToAction("Index", "Home");
 
-            _votingHub.Clients.All.SendAsync("UpdateVoteCount", "A");
+            int voted = 0;
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == Request.Cookies["UserId"]);
+
+            if (user == null)
+                return NotFound();
+
+            voted = user.Vote;
+
+            if(voted == 0)
+            {
+                try
+                {
+                    user.Vote = 1;
+                    _context.SaveChanges();
+                    await _votingHub.Clients.All.SendAsync("UpdateVoteCount", "A");
+                }catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return View("Index");
+                }
+
+            }
+            
             return RedirectToAction("Index");
         }
 
-        public IActionResult Vote2()
+        public async Task<IActionResult> Vote2()
         {
-            // Ensuring that the user has not already voted.
-            // Update the vote in user table database.
+            if (Request.Cookies["UserId"] == null)
+                return RedirectToAction("Index", "Home");
 
-            _votingHub.Clients.All.SendAsync("UpdateVoteCount", "B");
+            int voted = 0;
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == Request.Cookies["UserId"]);
+
+            if (user == null)
+                return NotFound();
+
+            voted = user.Vote;
+
+            if (voted == 0)
+            {
+                try
+                {
+                    user.Vote = 2;
+                    _context.SaveChanges();
+                    await _votingHub.Clients.All.SendAsync("UpdateVoteCount", "B");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return View("Index");
+                }
+
+            }
+            
             return RedirectToAction("Index");
         }
     }

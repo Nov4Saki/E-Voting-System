@@ -1,4 +1,6 @@
+using E_Voting_System.Entities;
 using E_Voting_System.Hubs;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Voting_System
 {
@@ -7,6 +9,16 @@ namespace E_Voting_System
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+
+                Console.WriteLine("DEBUG CONN = " + conn);
+
+                options.UseSqlServer(conn);
+            });
+
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -35,6 +47,7 @@ namespace E_Voting_System
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapHub<VotingHub>("/hubs/vote");
+
 
             app.Run();
         }
