@@ -4,3 +4,8 @@ python-multipart
 easyocr
 opencv-python
 numpy
+# Face matching (ID_matcher.ipynb)
+retina-face
+deepface
+tensorflow
+tf-keras
